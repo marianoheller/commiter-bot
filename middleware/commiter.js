@@ -7,6 +7,9 @@ const USER = process.env.GIT_USER;
 const PASS = process.env.GIT_PASSWORD;
 const REPO = process.env.GIT_REPO;
 
+const COMMIT_USER = process.env.COMMIT_USER;
+const COMMIT_EMAIL = process.env.COMMIT_EMAIL;
+
 const remote = `https://${USER}:${PASS}@${REPO}`;
  
 
@@ -23,14 +26,14 @@ module.exports= function __commiter(req, res, next) {
         .then( () => git(repoLocalPath).add(targetFile) )
         .then( () => {
             return git(repoLocalPath)
-            .addConfig('user.name', 'Bot commiter')
-            .addConfig('user.email', 'bot@commiter.com')
-            .commit( String( Date.now() ), { '--author': '"Bot <bot@commiter.com>"' } ) 
+            .addConfig('user.name', String(COMMIT_USER))
+            .addConfig('user.email', String(COMMIT_EMAIL))
+            .commit( String( Date.now() ), { '--author': `"${COMMIT_USER} <${COMMIT_EMAIL}>"` } ) 
         })
         .then( () => {
             return git(repoLocalPath)
-            .addConfig('user.name', 'Bot commiter')
-            .addConfig('user.email', 'bot@commiter.com')
+            .addConfig('user.name', String(COMMIT_USER))
+            .addConfig('user.email', String(COMMIT_EMAIL))
             .push('origin', 'master')
         } )
         .then( () => {
