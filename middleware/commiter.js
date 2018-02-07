@@ -24,13 +24,13 @@ module.exports= function __commiter(req, res, next) {
         .then( () => {
             return git(repoLocalPath)
             .addConfig('user.name', 'Bot commiter')
-            .addConfig('user.email', 'marianofheller@gmail.com')
+            .addConfig('user.email', 'bot@commiter.com')
             .commit( String( Date.now() ), { '--author': '"Bot <bot@commiter.com>"' } ) 
         })
         .then( () => {
             return git(repoLocalPath)
             .addConfig('user.name', 'Bot commiter')
-            .addConfig('user.email', 'marianofheller@gmail.com')
+            .addConfig('user.email', 'bot@commiter.com')
             .push('origin', 'master')
         } )
         .then( () => {
