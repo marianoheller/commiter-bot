@@ -1,5 +1,6 @@
 const rimraf = require('rimraf');
-const git = require('simple-git/promise');
+const gitPromise = require('simple-git/promise');
+const git = require('simple-git');
 const fs = require('fs');
 
 const USER = process.env.GIT_USER;
@@ -15,12 +16,23 @@ module.exports= function __commiter(req, res, next) {
     const targetFile = 'README.md';
     
     rimraf(repoLocalPath, () => { 
-        git().silent(true)
+        gitPromise()
+        .silent(true)
         .clone(remote, repoLocalPath)
         .then(() => timestampWriter(`${repoLocalPath}/${targetFile}`) )
         .then( () => git(repoLocalPath).add(targetFile) )
-        .then( () => git(repoLocalPath).commit( String(Date.now()) ) )
-        .then( () => git(repoLocalPath).push('origin', 'master') )
+        .then( () => {
+            return git(repoLocalPath)
+            .addConfig('user.name', 'Bot commiter')
+            .addConfig('user.email', 'marianofheller@gmail.com')
+            .commit( String( Date.now() ), { '--author': '"Bot <bot@commiter.com>"' } ) 
+        })
+        .then( () => {
+            return git(repoLocalPath)
+            .addConfig('user.name', 'Bot commiter')
+            .addConfig('user.email', 'marianofheller@gmail.com')
+            .push('origin', 'master')
+        } )
         .then( () => {
             console.log("FINISHED");
             next();
@@ -28,7 +40,7 @@ module.exports= function __commiter(req, res, next) {
         .catch((err) => {
             console.error('failed: ', err);
             next();
-        });
+        })
     });
 }
 
